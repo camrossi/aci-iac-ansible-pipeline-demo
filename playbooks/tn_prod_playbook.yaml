@@ -95,4 +95,3 @@
         filter: "{{ item.1 }}"
         log: log
       loop: "{{ contracts | subelements('filters') }}"
-      
