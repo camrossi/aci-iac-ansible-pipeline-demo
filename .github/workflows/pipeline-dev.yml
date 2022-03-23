@@ -3,10 +3,8 @@ name: pipeline-dev
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull requests events on the dev branch
+  # Triggers the workflow on push (and merge) events on the dev branch
   push:
-    branches: [dev]
-  pull_request:
     branches: [dev]
 
 # Environment variables
