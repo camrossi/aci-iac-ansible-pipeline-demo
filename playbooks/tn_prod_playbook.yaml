@@ -1,5 +1,6 @@
 # ACI playbook - Create Tenant prod including networking and contracts
 ---
+
 - name: Create Tenant prod
   hosts: apic
   connection: local
@@ -18,7 +19,7 @@
       output_path: dryrun_data.json
 
   vars_files:
-   - ./tn_prod_vars.yaml
+    - ./tn_prod_vars.yaml
 
   tasks:
     - name: Add Tenant
@@ -52,7 +53,7 @@
         bd: "{{ item.name }}"
         gateway: "{{ item.gateway.split('/')[0] }}"
         mask: "{{ item.gateway.split('/')[1] }}"
-        scope:  "{{ item.scope }}"
+        scope: "{{ item.scope }}"
       loop: "{{ bridge_domains }}"
       when: item.mode == 'L3'
 
@@ -64,9 +65,9 @@
         l3out: "{{ l3out_name }}"
       loop: "{{ bridge_domains }}"
       when: item.mode == 'L3' and "public" in item.scope
-    
+
     # Contract Definition
-    
+
     - name: Add contracts
       cisco.aci.aci_contract:
         <<: *aci_login
@@ -94,3 +95,4 @@
         filter: "{{ item.1 }}"
         log: log
       loop: "{{ contracts | subelements('filters') }}"
+      
