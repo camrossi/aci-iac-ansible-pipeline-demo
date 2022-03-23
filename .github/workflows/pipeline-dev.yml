@@ -1,0 +1,82 @@
+# Networking CICD Pipeline with pre-change validation powered by Nexus Dashboard
+name: pipeline-dev
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull requests events on the dev branch
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+# Environment variables
+env:
+  IG_NAME: dc_spain
+  SITE_NAME: MLG01
+  PYTHONWARNINGS: "ignore:Unverified HTTPS request"
+
+jobs:
+  # Run ansible lint on the complete directory
+  ansible-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Lint ansible playbook
+        uses: ansible/ansible-lint-action@main
+        with:
+          path: ./playbooks
+
+  # Run ansible dry-run using check mode. Result is uploaded as artifact
+  ansible-dry-run:
+    runs-on: self-hosted
+    needs: ansible-lint
+    container: adealdag/ansible:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run ansible playbook dry-run
+        env:
+          VAULT_KEY: ${{ secrets.VAULT_KEY }}
+        run: |
+          ansible --version
+          echo $VAULT_KEY > vault.key
+          ansible-playbook -i inventory.yaml --vault-password-file vault.key deploy.yaml --check
+          rm vault.key
+        working-directory: playbooks
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: config-dump
+          path: playbooks/dryrun_data.json
+
+  # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
+  pre-change-validation:
+    runs-on: self-hosted
+    needs: ansible-dry-run
+    container: adealdag/python:3.9.10-mod
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: config-dump
+
+      - name: Transform dry-run output to aci config
+        run: |
+          python ./tools/dryrun_to_config/py_dryrun_to_config.py --input dryrun_data.json --output config.json --loglevel INFO
+
+      - name: Run pre-change validation on Nexus Dashboard Insights
+        env:
+          ND_HOST: ${{ secrets.ND_HOST }}
+          ND_USERNAME: ${{ secrets.ND_USERNAME }}
+          ND_PASSWORD: ${{ secrets.ND_PASSWORD }}
+          ND_DOMAIN: ${{ secrets.ND_DOMAIN }}
+        run: |
+          export no_proxy=$ND_HOST,$no_proxy
+          python ./tools/run_prechange/py_run_pcv.py --name $GITHUB_SHA --igname $IG_NAME --site $SITE_NAME --file ./config.json --loglevel INFO --allowUnsupportedObjectModification
