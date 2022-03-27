@@ -7,8 +7,6 @@ epgs:
     contracts:
       - contract: external_to_web_con
         type: consumer
-      - contract: external_to_web_con
-        type: provider
       - contract: web_to_app_con
         type: consumer
       - contract: any_to_log_con
