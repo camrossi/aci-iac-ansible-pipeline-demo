@@ -1,0 +1,50 @@
+# Networking CICD Pipeline with pre-change validation powered by Nexus Dashboard
+name: pipeline-prod
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events on the prod branch
+  push:
+    branches: [prod]
+
+# Environment variables
+env:
+  IG_NAME: dc_spain
+  SITE_NAME: MLG01
+  PYTHONWARNINGS: "ignore:Unverified HTTPS request"
+
+jobs:
+  # Take a snapshot of the ACI fabric
+  snapshot:
+    runs-on: self-hosted
+    container: adealdag/aci_cobra:4.2.3n
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Take an aci snapshot
+        env:
+          APIC_HOST: ${{ secrets.APIC_HOST }}
+          APIC_USERNAME: ${{ secrets.APIC_USERNAME }}
+          APIC_PASSWORD: ${{ secrets.APIC_PASSWORD }}
+        run: |
+          export no_proxy=$APIC_HOST,$no_proxy
+          python ./tools/trigger_backup/py_trigger_backup.py
+
+  ansible-deploy:
+    runs-on: self-hosted
+    needs: [snapshot]
+    container: adealdag/ansible:latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run ansible playbook
+        env:
+          VAULT_KEY: ${{ secrets.VAULT_KEY }}
+        run: |
+          ansible --version
+          echo $VAULT_KEY > vault.key
+          ansible-playbook -i inventory.yaml --vault-password-file vault.key deploy.yaml
+          rm vault.key
+        working-directory: playbooks
