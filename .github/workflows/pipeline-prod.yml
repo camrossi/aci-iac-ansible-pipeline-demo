@@ -31,6 +31,19 @@ jobs:
           export no_proxy=$APIC_HOST,$no_proxy
           python ./tools/trigger_backup/py_trigger_backup.py
 
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python-v1
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: |
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
   ansible-deploy:
     runs-on: self-hosted
     needs: [snapshot]
@@ -48,3 +61,16 @@ jobs:
           ansible-playbook -i inventory.yaml --vault-password-file vault.key deploy.yaml
           rm vault.key
         working-directory: playbooks
+
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python-v1
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: |
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
