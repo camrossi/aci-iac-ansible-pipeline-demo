@@ -33,12 +33,12 @@ jobs:
         run: yamllint ./playbooks
 
       - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python
+        uses: adealdag/action-webex-notification@python-v1
         if: always()
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: >
+          markdownMsg: |
             ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
@@ -71,12 +71,12 @@ jobs:
           path: playbooks/dryrun_data.json
 
       - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python
+        uses: adealdag/action-webex-notification@python-v1
         if: always()
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: >
+          markdownMsg: |
             ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
@@ -112,12 +112,12 @@ jobs:
           python ./tools/run_prechange/py_run_pcv.py --name $GITHUB_SHA --igname $IG_NAME --site $SITE_NAME --file ./config.json --loglevel INFO --allowUnsupportedObjectModification
 
       - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python
+        uses: adealdag/action-webex-notification@python-v1
         if: always()
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: >
+          markdownMsg: |
             ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
