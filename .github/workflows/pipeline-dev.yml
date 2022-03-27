@@ -32,6 +32,19 @@ jobs:
       - name: Lint YAML files
         run: yamllint ./playbooks
 
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python-v1
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: |
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
   # Run ansible dry-run using check mode. Result is uploaded as artifact
   ansible-dry-run:
     runs-on: self-hosted
@@ -56,6 +69,19 @@ jobs:
         with:
           name: config-dump
           path: playbooks/dryrun_data.json
+
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python-v1
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: |
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
@@ -84,3 +110,16 @@ jobs:
         run: |
           export no_proxy=$ND_HOST,$no_proxy
           python ./tools/run_prechange/py_run_pcv.py --name $GITHUB_SHA --igname $IG_NAME --site $SITE_NAME --file ./config.json --loglevel INFO --allowUnsupportedObjectModification
+
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python-v1
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: |
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Nexus Dashboard Insights](${{ secrets.ND_HOST }}/appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
