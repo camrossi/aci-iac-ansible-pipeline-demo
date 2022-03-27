@@ -39,11 +39,11 @@ jobs:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
           markdownMsg: |
-            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
             * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID)
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/runs/${{ github.run_id }})
 
   # Run ansible dry-run using check mode. Result is uploaded as artifact
   ansible-dry-run:
@@ -77,11 +77,11 @@ jobs:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
           markdownMsg: |
-            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
             * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID)
+            * Details URL: [Job Results](https://github.com/${{ github.repository }}/runs/${{ github.run_id }})
 
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
@@ -118,9 +118,9 @@ jobs:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
           markdownMsg: |
-            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
             * Status: ${{ job.status }}
-            * Details URL: [Nexus Dashboard Insights]($ND_HOST//appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
-            * Report: $PCA_REPORT
+            * Details URL: [Nexus Dashboard Insights](${{ env.ND_HOST }}/appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
+            * Report: ${{ env.PCA_REPORT }}
