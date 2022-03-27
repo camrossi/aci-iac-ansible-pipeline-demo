@@ -88,3 +88,6 @@ jobs:
           file: ./config.json
           logLevel: INFO
           allowUnsupportedObjectModification: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NO_PROXY: ${{ secrets.ND_HOST }}, $NO_PROXY
