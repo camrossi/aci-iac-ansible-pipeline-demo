@@ -1,0 +1,183 @@
+tenant_name: prod
+vrf_name: main_vrf
+l3out_name: shared_l3out
+
+bridge_domains:
+  - name: 192.168.21.0_24_bd
+    mode: L3
+    gateway: 192.168.21.1/24
+    scope: [public, shared]
+  - name: 192.168.22.0_24_bd
+    mode: L3
+    gateway: 192.168.22.1/24
+    scope: [public]
+  - name: 192.168.23.0_24_bd
+    mode: L3
+    gateway: 192.168.23.1/24
+    scope: [public]
+
+app_name: hrms_app
+epgs:
+  - name: hrms_fe_epg
+    bd: 192.168.21.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: external_to_web_con
+        type: consumer
+      - contract: web_to_app_con
+        type: consumer
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 301
+  - name: hrms_be_epg
+    bd: 192.168.22.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: app_to_db_con
+        type: consumer
+      - contract: web_to_app_con
+        type: provider
+      - contract: app_to_auth_con
+        type: consumer
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 302
+  - name: db_epg
+    bd: 192.168.23.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: cache_to_db_con
+        type: provider
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 303
+  - name: db_cache_epg
+    bd: 192.168.23.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: app_to_db_con
+        type: provider
+      - contract: cache_to_db_con
+        type: consumer
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 304
+  - name: log_epg
+    bd: 192.168.22.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: any_to_log_con
+        type: provider
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 305
+  - name: auth_epg
+    bd: 192.168.22.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: app_to_auth_con
+        type: provider
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: prod_physdom
+    ports:
+      - interface: vpc_ucs-c1-1
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 2103-2104
+        encap: 306
+
+contracts:
+  - name: web_to_app_con
+    descr: Communication between web servers and application backend
+    scope: application-profile
+    subject: https_icmp
+    reverse_filter: yes
+    filters:
+      - https
+      - icmp
+  - name: app_to_db_con
+    descr: Communication between application backend and databases
+    scope: application-profile
+    subject: mariadb_icmp
+    reverse_filter: yes
+    filters:
+      - mariadb
+      - icmp
+  - name: any_to_log_con
+    descr: Communication between any component and log
+    scope: application-profile
+    subject: https
+    reverse_filter: yes
+    filters:
+      - https
+  - name: any_to_dns_con
+    descr: Communication between any component and dns
+    scope: application-profile
+    subject: dns_icmp
+    reverse_filter: yes
+    filters:
+      - dns
+      - icmp
+  - name: app_to_auth_con
+    descr: Communication between application backend and authentication services
+    scope: application-profile
+    subject: https_icmp
+    reverse_filter: yes
+    filters:
+      - https
+      - icmp
+  - name: cache_to_db_con
+    descr: Communication between application backend and database cache
+    scope: application-profile
+    subject: mariadb_icmp
+    reverse_filter: yes
+    filters:
+      - mariadb
+      - icmp
