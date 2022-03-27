@@ -86,7 +86,7 @@ jobs:
           python ./tools/run_prechange/py_run_pcv.py --name $GITHUB_SHA --igname $IG_NAME --site $SITE_NAME --file ./config.json --loglevel INFO --allowUnsupportedObjectModification
 
       - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@master
+        uses: adealdag/action-webex-notification@python
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
