@@ -121,7 +121,7 @@ else:
                  pcv_job_data["jobId"])
 
 # Get job information - Loop until completed
-retries_left = 15  # Retry 15 times, once per minute
+retries_left = int(args.timeout)  # Retry <timeout> times, once per minute.
 job_status = "UNKNOWN"
 
 while(job_status != "COMPLETED" and retries_left > 0):
@@ -150,34 +150,78 @@ while(job_status != "COMPLETED" and retries_left > 0):
             "Job is still not completed, current state is {}. There are {} retries left. Checking again in 60 seconds...".format(job_status, retries_left))
         continue
 
-logging.info("Job completed. Epoch Delta JobID is {}".format(
-    pcv_job_status_data["epochDeltaJobId"]))
+# Verify result and proceed
+if job_status == "COMPLETED":
+    logging.info("Job completed. Epoch Delta JobID is {}".format(
+        pcv_job_status_data["epochDeltaJobId"]))
 
-# Get epoch delta analysis information
-url = nd_url + \
-    "/sedgeapi/v1/cisco-nir/api/api/telemetry/v2/epochDelta/insightsGroup/{}/fabric/{}/job/{}/health/view/eventSeverity".format(
-        args.igname, args.site, pcv_job_status_data["epochDeltaJobId"])
+    # Get epoch delta analysis information
+    url = nd_url + \
+        "/sedgeapi/v1/cisco-nir/api/api/telemetry/v2/epochDelta/insightsGroup/{}/fabric/{}/job/{}/health/view/eventSeverity".format(
+            args.igname, args.site, pcv_job_status_data["epochDeltaJobId"])
 
-response = session.get(url, headers={})
+    response = session.get(url, headers={})
 
-if response.status_code != 200:
-    logging.error("Epoch Delta collection failed: {}".format(
-        response.json()))
-    sys.exit(-1)
-else:
-    pcv_epoch_delta_data = response.json()["value"]["data"]
+    if response.status_code != 200:
+        logging.error("Epoch Delta collection failed: {}".format(
+            response.json()))
+        sys.exit(-1)
+    else:
+        pcv_epoch_delta_data = response.json()["value"]["data"]
 
-# Analyze epoch delta results
-delta_result = 0
+    # Analyze epoch delta results
+    delta_result = {}
 
-for item in pcv_epoch_delta_data:
-    event_count = {x["bucket"]: x["count"] for x in item["output"]}
+    for item in pcv_epoch_delta_data:
+        severity = item["bucket"].split("_")[-1]
+        event_count = {x["bucket"]: x["count"] for x in item["output"]}
+        logging.info(
+            "There are {} new {} anomalies after pre-change analysis".format(event_count["EPOCH2_ONLY"], severity))
+        delta_result[severity] = event_count["EPOCH2_ONLY"]
+
+    # Calculate total - INFO events are not considered for total
+    total_anomalies = sum(
+        v for k, v in delta_result.items() if k != 'INFO')
+
     logging.info(
-        "There are {} new {} anomalies after pre-change analysis".format(event_count["EPOCH2_ONLY"], item["bucket"].split("_")[-1]))
-    # INFO events are not considered
-    if "INFO" not in item["bucket"]:
-        delta_result += event_count["EPOCH2_ONLY"]
+        "Total number of new relevant anomalies (INFO excluded) is: {}".format(total_anomalies))
 
-logging.info(
-    "Total number of new relevant anomalies (INFO excluded) is: {}".format(delta_result))
-sys.exit(delta_result)
+    # Build Pre-Change Analysis report
+    pca_report = f"""## Pre-Change Analysis details:
+
+        **PCA Name:** {args.name}
+        **PCA Description:** {args.descr}
+        **PCA Insights Group:** {args.igname}
+        **PCA Site Name:** {args.site}
+
+    ### Results:
+
+    **CRITICAL:** There has been {delta_result['CRITICAL']} anomalies
+    **MAJOR:** There has been {delta_result['MAJOR']} anomalies
+    **MINOR:** There has been {delta_result['MINOR']} anomalies
+    **WARNING:** There has been {delta_result['WARNING']} anomalies
+    **INFO:** There has been {delta_result['INFO']} anomalies
+    """
+
+    os.environ['PCA_REPORT'] = str(pca_report)
+
+    sys.exit(total_anomalies)
+
+else:
+    logging.error(f"Job timed_out after {args.timeout} minutes")
+
+    pca_report = f"""## Pre-Change Analysis details:
+
+        **PCA Name:** {args.name}
+        **PCA Description:** {args.descr}
+        **PCA Insights Group:** {args.igname}
+        **PCA Site Name:** {args.site}
+
+    ### Results:
+
+    **TIME-OUT:** Pre-change analysis hasn't been completed in the maximum timeout value provided ({args.timeout} minutes)
+    """
+
+    os.environ['PCA_REPORT'] = str(pca_report)
+
+    sys.exit(-1)
