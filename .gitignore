@@ -2,3 +2,4 @@
 *.retry
 *.key
 tools/dryrun_to_config/__pycache__/aci_config_tree.cpython-39.pyc
+**/.DS_Store
