@@ -90,5 +90,5 @@ jobs:
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
-          textMsg: "Pre-change analysis completed"
-          markdownMsg: "Pre-change analysis completed"
+          textMsg: $PCA_REPORT
+          markdownMsg: $PCA_REPORT
