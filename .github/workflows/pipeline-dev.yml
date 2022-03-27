@@ -32,6 +32,19 @@ jobs:
       - name: Lint YAML files
         run: yamllint ./playbooks
 
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: >
+            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID)
+
   # Run ansible dry-run using check mode. Result is uploaded as artifact
   ansible-dry-run:
     runs-on: self-hosted
@@ -56,6 +69,19 @@ jobs:
         with:
           name: config-dump
           path: playbooks/dryrun_data.json
+
+      - name: Send Webex Notification
+        uses: adealdag/action-webex-notification@python
+        if: always()
+        with:
+          webexToken: ${{ secrets.WEBEX_TOKEN }}
+          roomID: ${{ secrets.ROOM_ID }}
+          markdownMsg: >
+            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Job Results](https://github.com/$GITHUB_REPOSITORY/runs/$GITHUB_RUN_ID)
 
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
@@ -87,8 +113,14 @@ jobs:
 
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python
+        if: always()
         with:
           webexToken: ${{ secrets.WEBEX_TOKEN }}
           roomID: ${{ secrets.ROOM_ID }}
-          textMsg: $PCA_REPORT
-          markdownMsg: $PCA_REPORT
+          markdownMsg: >
+            ## [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
+            * Trigger: ${{ github.event_name }}
+            * Git SHA: ${{ github.sha }}
+            * Status: ${{ job.status }}
+            * Details URL: [Nexus Dashboard Insights]($ND_HOST//appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
+            * Report: $PCA_REPORT
