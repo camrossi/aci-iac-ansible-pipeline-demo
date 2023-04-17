@@ -119,7 +119,7 @@ epgs:
     bd: 192.168.22.0_24_bd
     prefGroup: no
     contracts:
-      - contract: app_to_auth_con
+      - contract: app_to_auth_conm
         type: provider
       - contract: any_to_log_con
         type: consumer
