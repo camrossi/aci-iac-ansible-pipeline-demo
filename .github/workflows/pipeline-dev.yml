@@ -94,7 +94,7 @@ jobs:
         env:
           ND_PASSWORD: ${{ secrets.ND_PASSWORD }}
         run: |
-          ansible-playbook -i inventory.yaml pcv.yaml --extra-vars="ansible_ssh_pass=${{ secrets.ND_HOST }}"
+          ansible-playbook -i inventory.yaml pcv.yaml --extra-vars="ansible_ssh_pass=${{ secrets.ND_PASSWORD }}"
       - name: Get ND Host name
         run: cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host >> $ND_HOST
       - name: Send Webex Notification
