@@ -95,7 +95,7 @@ jobs:
 
       - name: Get ND Host name
         run:  |
-          ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host``
+          ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host`
           echo $ND_HOST >> $GITHUB_ENV
         working-directory: playbooks
 
