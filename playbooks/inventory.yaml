@@ -2,9 +2,18 @@ dcmdr:
   children:
     apic:
       hosts:
-        fab1-apic1.cam.ciscolabs.com:
+        fab1:
           ansible_host: fab1-apic1.cam.ciscolabs.com
           aci_username: "ansible"
           aci_private_key: /home/cisco/Coding/ansible.key
           aci_certificate_name: ansible.crt
           aci_validate_certs: no
+    nd:
+      hosts:
+        nd:
+          ansible_host: nd1.cam.ciscolabs.com
+          ansible_user: admin
+          ansible_connection: ansible.netcommon.httpapi
+          ansible_network_os: cisco.nd.nd
+          ansible_httpapi_validate_certs: False
+          ansible_httpapi_use_ssl: True

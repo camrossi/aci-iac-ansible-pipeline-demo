@@ -1,0 +1,42 @@
+# Pre-change validation - Creates a pre-change validation using a JSON file, waits for the result and evaluates it
+---
+
+- name: Run Pre-change validation
+  hosts: nd
+  gather_facts: no
+
+  vars:
+    ig_name: SYD
+    site_name: FAB1
+    pcv_name: PCV_ANSIBLE5
+
+  tasks:
+    - name: Create a new Pre-Change analysis from file
+      cisco.nd.nd_pcv:
+        ig_name: "{{ ig_name }}"
+        site_name: "{{ site_name }}"
+        name: "{{ pcv_name }}"
+        file: dryrun_data.json
+        state: present
+        output_level: debug
+
+    - name: Get prechange validation status
+      cisco.nd.nd_pcv:
+        insights_group: "{{ ig_name }}"
+        site_name: "{{ site_name }}"
+        name: "{{ pcv_name }}"
+        state: query
+        output_level: debug
+      register: nd_pcv_status
+      until: nd_pcv_status.current.analysisStatus == "COMPLETED"
+      retries: 100
+      delay: 10
+
+    - name: query a pre_change analysis
+      cisco.nd.nd_pcv_delta_analysis:
+        ig_name: "{{ ig_name }}"
+        site_name: "{{ site_name }}"
+        name: "{{ pcv_name }}"
+        epoch_choice: 'epoch1'
+        output_level: debug
+      register: pcv_result
