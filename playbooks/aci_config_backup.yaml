@@ -1,0 +1,25 @@
+# ACI playbook - Create Config Backup
+---
+
+- name: Create Config Backup
+  hosts: apic
+  connection: local
+  gather_facts: no
+
+  vars:
+    aci_login: &aci_login
+      host: "{{ ansible_host }}"
+      username: "{{ aci_username }}"
+      password: "{{ aci_password | default(omit) }}"
+      private_key: "{{ aci_private_key | default(omit) }}"
+      certificate_name: "{{ aci_certificate_name | default(omit) }}"
+      validate_certs: "{{ aci_validate_certs }}"
+      annotation: "orchestrator:ansible"
+      state: present
+
+  tasks:
+    - name: Add Tenant
+      cisco.aci.aci_config_snapshot:
+        <<: *aci_login
+        export_policy: config_backup
+        tenant: "{{ tenant_name }}"

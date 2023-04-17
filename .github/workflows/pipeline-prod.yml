@@ -20,13 +20,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Take an aci snapshot
-        env:
-          APIC_HOST: ${{ secrets.APIC_HOST }}
-          APIC_USERNAME: ${{ secrets.APIC_USERNAME }}
-          APIC_PASSWORD: ${{ secrets.APIC_PASSWORD }}
         run: |
-          export no_proxy=$APIC_HOST,$no_proxy
-          python ./tools/trigger_backup/py_trigger_backup.py
+          ansible --version
+          ansible-playbook -i inventory.yaml aci_config_backup.yaml
 
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
