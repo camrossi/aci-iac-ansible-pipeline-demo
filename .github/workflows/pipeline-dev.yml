@@ -58,12 +58,6 @@ jobs:
           ansible-playbook -i inventory.yaml deploy.yaml --check
         working-directory: playbooks
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: config-dump
-          path: playbooks/dryrun_data.json
-
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
         if: always()
@@ -94,7 +88,7 @@ jobs:
 
       - name: Get ND Host name
         run:  |
-          ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host`
+          ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd1.ansible_host`
           echo "ND_HOST=$ND_HOST" >> $GITHUB_ENV
         working-directory: playbooks
 

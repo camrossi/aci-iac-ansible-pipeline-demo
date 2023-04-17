@@ -10,7 +10,7 @@ dcmdr:
           aci_validate_certs: no
     nd:
       hosts:
-        nd:
+        nd1:
           ansible_host: nd1.cam.ciscolabs.com
           ansible_user: admin
           ansible_connection: ansible.netcommon.httpapi
