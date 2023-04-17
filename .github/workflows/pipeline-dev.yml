@@ -9,8 +9,8 @@ on:
 
 # Environment variables
 env:
-  IG_NAME: dc_spain
-  SITE_NAME: MLG01
+  IG_NAME: SYD
+  SITE_NAME: FAB1
   PYTHONWARNINGS: "ignore:Unverified HTTPS request"
 
 jobs:

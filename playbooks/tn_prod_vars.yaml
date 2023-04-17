@@ -1,6 +1,6 @@
-tenant_name: prod
+tenant_name: cicd_prod
 vrf_name: main_vrf
-l3out_name: shared_l3out
+l3out_name: cicd_shared_l3out
 
 bridge_domains:
   - name: 192.168.21.0_24_bd
@@ -30,13 +30,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 301
   - name: hrms_be_epg
     bd: 192.168.22.0_24_bd
@@ -52,13 +52,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 302
   - name: db_epg
     bd: 192.168.23.0_24_bd
@@ -70,13 +70,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 303
   - name: db_cache_epg
     bd: 192.168.23.0_24_bd
@@ -90,13 +90,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 304
   - name: log_epg
     bd: 192.168.22.0_24_bd
@@ -106,13 +106,13 @@ epgs:
         type: provider
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 305
   - name: auth_epg
     bd: 192.168.22.0_24_bd
@@ -124,14 +124,34 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 306
+
+filters:
+  - name: https
+    ether_type: ip
+    ip_protocol: tcp
+    dst_port_start: 443
+    dst_port_end: 443
+  - name: dns
+    ether_type: ip
+    ip_protocol: udp
+    dst_port_start: 53
+    dst_port_end: 53
+  - name: icmp
+    ether_type: ip
+    ip_protocol: icmp
+  - name: mariadb
+    ether_type: ip
+    ip_protocol: tcp
+    dst_port_start: 3306
+    dst_port_end: 3306
 
 contracts:
   - name: web_to_app_con

@@ -1,4 +1,4 @@
-tenant_name: prod
+tenant_name: cicd_prod
 app_name: hrms_app
 epgs:
   - name: hrms_fe_epg
@@ -13,13 +13,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 301
   - name: hrms_be_epg
     bd: 192.168.22.0_24_bd
@@ -35,13 +35,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 302
   - name: db_epg
     bd: 192.168.23.0_24_bd
@@ -53,13 +53,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 303
   - name: db_cache_epg
     bd: 192.168.23.0_24_bd
@@ -73,13 +73,13 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 304
   - name: log_epg
     bd: 192.168.22.0_24_bd
@@ -89,13 +89,13 @@ epgs:
         type: provider
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 305
   - name: auth_epg
     bd: 192.168.22.0_24_bd
@@ -107,11 +107,11 @@ epgs:
         type: consumer
     domains:
       - type: phys
-        domain: prod_physdom
+        domain: iac_physdom
     ports:
-      - interface: vpc_ucs-c1-1
+      - interface: vpc_iac
         type: vpc
         mode: regular
         pod: 1
-        leafs: 2103-2104
+        leafs: 101-102
         encap: 306

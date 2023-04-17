@@ -68,6 +68,26 @@
 
     # Contract Definition
 
+    - name: Add filters
+      cisco.aci.aci_filter:
+        <<: *aci_login
+        tenant: "{{ tenant_name }}"
+        filter: "{{ item.name }}"
+      loop: "{{ filters }}"
+
+    - name: Create a filter entry
+      cisco.aci.aci_filter_entry:
+        <<: *aci_login
+        tenant: "{{ tenant_name }}"
+        entry: "{{ item.name }}"
+        filter: "{{ item.name }}"
+        ether_type: "{{ item.ether_type  }}"
+        ip_protocol: "{{ item.ip_protocol }}"
+        dst_port_start: "{{ item.dst_port_start | default(omit) }}"
+        dst_port_end: "{{ item.dst_port_end | default(omit) }}"
+      loop: "{{ filters }}"
+
+
     - name: Add contracts
       cisco.aci.aci_contract:
         <<: *aci_login
