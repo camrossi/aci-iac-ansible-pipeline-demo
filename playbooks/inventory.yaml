@@ -5,6 +5,6 @@ dcmdr:
         fab1-apic1.cam.ciscolabs.com:
           ansible_host: fab1-apic1.cam.ciscolabs.com
           aci_username: "ansible"
-          aci_private_key: ../../ansible.key
+          aci_private_key: /home/cisco/Coding/ansible.key
           aci_certificate_name: ansible.crt
           aci_validate_certs: no

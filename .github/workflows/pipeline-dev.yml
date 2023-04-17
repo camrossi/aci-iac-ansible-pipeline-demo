@@ -55,13 +55,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run ansible playbook dry-run
-        env:
-          VAULT_KEY: ${{ secrets.VAULT_KEY }}
         run: |
           ansible --version
-          echo $VAULT_KEY > vault.key
-          ansible-playbook -i inventory.yaml --vault-password-file vault.key deploy.yaml --check
-          rm vault.key
+          ansible-playbook -i inventory.yaml deploy.yaml --check
         working-directory: playbooks
 
       - name: Upload artifact
