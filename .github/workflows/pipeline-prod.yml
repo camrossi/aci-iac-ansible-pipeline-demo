@@ -15,7 +15,6 @@ jobs:
   # Take a snapshot of the ACI fabric
   snapshot:
     runs-on: self-hosted
-
     steps:
       - uses: actions/checkout@v2
 
@@ -41,7 +40,7 @@ jobs:
   ansible-deploy:
     runs-on: self-hosted
     needs: [snapshot]
-    container: adealdag/ansible:latest
+    #container: adealdag/ansible:latest
 
     steps:
       - uses: actions/checkout@v2
