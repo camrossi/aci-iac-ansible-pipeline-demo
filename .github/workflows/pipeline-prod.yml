@@ -23,8 +23,8 @@ jobs:
         run: |
           ansible --version
           ansible-playbook -i inventory.yaml aci_config_backup.yaml
-        working-directory: playbooks'
-        
+        working-directory: playbooks
+
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
         if: always()
