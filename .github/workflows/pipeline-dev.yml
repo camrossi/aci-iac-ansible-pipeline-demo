@@ -95,7 +95,8 @@ jobs:
 
       - name: Get ND Host name
         run:  cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host >> $GITHUB_ENV
-
+        working-directory: playbooks
+        
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
         if: always()
