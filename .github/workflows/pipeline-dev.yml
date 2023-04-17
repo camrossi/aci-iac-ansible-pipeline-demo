@@ -80,7 +80,7 @@ jobs:
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
     runs-on: self-hosted
-    needs: ansible-dry-run
+    #needs: ansible-dry-run
     #container: adealdag/python:3.9.10-mod
 
     steps:
@@ -94,9 +94,9 @@ jobs:
         working-directory: playbooks
 
       - name: Get ND Host name
-        run:  cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host >> $GITHUB_ENV
+        run:  echo "ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host` >> $GITHUB_ENV
         working-directory: playbooks
-        
+
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
         if: always()
