@@ -108,4 +108,4 @@ jobs:
             * Trigger: ${{ github.event_name }}
             * Git SHA: ${{ github.sha }}
             * Status: ${{ job.status }}
-            * Details URL: [Nexus Dashboard Insights](${{ ND_HOST }}/appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
+            * Details URL: [Nexus Dashboard Insights]($ND_HOST/appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
