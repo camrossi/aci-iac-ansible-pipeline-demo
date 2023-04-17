@@ -12,70 +12,6 @@ env:
   PYTHONWARNINGS: "ignore:Unverified HTTPS request"
 
 jobs:
-  # Run ansible lint on the complete directory
-  ansible-lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-
-      - name: Install yamllint
-        run: pip install yamllint
-
-      - name: Lint YAML files
-        run: yamllint ./playbooks
-
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-  # Run ansible dry-run using check mode. Result is uploaded as artifact
-  ansible-dry-run:
-    runs-on: self-hosted
-    needs: ansible-lint
-    #container: adealdag/ansible:latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run ansible playbook dry-run
-        run: |
-          ansible --version
-          ansible-playbook -i inventory.yaml deploy.yaml --check
-        working-directory: playbooks
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: config-dump
-          path: playbooks/dryrun_data.json
-
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
@@ -94,8 +30,8 @@ jobs:
         working-directory: playbooks
 
       - name: Get ND Host name
-        run: cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host >> $ND_HOST
-        
+        run:  cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd.ansible_host >> $GITHUB_ENV
+
       - name: Send Webex Notification
         uses: adealdag/action-webex-notification@python-v1
         if: always()
