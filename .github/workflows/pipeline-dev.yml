@@ -54,6 +54,7 @@ jobs:
 
       - name: Run ansible playbook dry-run
         run: |
+          rm -f dryrun_data.json
           ansible --version
           ansible-playbook -i inventory.yaml deploy.yaml --check
         working-directory: playbooks
