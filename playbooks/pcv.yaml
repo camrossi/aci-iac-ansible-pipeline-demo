@@ -32,12 +32,12 @@
         name: "{{ pcv_name }}"
         epoch_choice: 'epoch2'
       register: pcv_result
-    
+
     - name: PCV Result
       ansible.builtin.debug:
         msg:
           - Detected anomalies by severity
-          - critical =  {{pcv_result.current.anomaly_count.critical.epoch2_only}}
+          - critical = {{pcv_result.current.anomaly_count.critical.epoch2_only}}
           - major = {{pcv_result.current.anomaly_count.major.epoch2_only}}
           - minor = {{pcv_result.current.anomaly_count.minor.epoch2_only}}
           - warning = {{pcv_result.current.anomaly_count.warning.epoch2_only}}
