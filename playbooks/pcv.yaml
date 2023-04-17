@@ -1,6 +1,4 @@
-# Pre-change validation - Creates a pre-change validation using a JSON file, waits for the result and evaluates it
 ---
-
 - name: Run Pre-change validation
   hosts: nd
   gather_facts: no
@@ -40,3 +38,4 @@
         epoch_choice: 'epoch1'
         output_level: debug
       register: pcv_result
+      
