@@ -78,7 +78,7 @@ jobs:
     #container: adealdag/python:3.9.10-mod
 
     steps:
-      - uses: actions/checkout@v2
+      #- uses: actions/checkout@v2
 
       - name: Run pre-change validation on Nexus Dashboard Insights
 
