@@ -18,8 +18,8 @@
       state: present
 
   tasks:
-    - name: Add Tenant
+    - name: Create Config Backup
       cisco.aci.aci_config_snapshot:
         <<: *aci_login
         export_policy: config_backup
-        tenant: "{{ tenant_name }}"
+        description: Backups IAC Demo
