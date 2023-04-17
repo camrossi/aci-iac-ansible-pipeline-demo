@@ -6,7 +6,7 @@
   vars:
     ig_name: SYD
     site_name: FAB1
-    pcv_name: PCV_ANSIBLE5
+    pcv_name: PCV_ANSIBLE_FAIL
 
   tasks:
     - name: Create a new Pre-Change analysis from file
