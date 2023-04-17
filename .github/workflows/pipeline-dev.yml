@@ -49,7 +49,7 @@ jobs:
   ansible-dry-run:
     runs-on: self-hosted
     needs: ansible-lint
-    container: adealdag/ansible:latest
+    #container: adealdag/ansible:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -87,7 +87,7 @@ jobs:
   pre-change-validation:
     runs-on: self-hosted
     needs: ansible-dry-run
-    container: adealdag/python:3.9.10-mod
+    #container: adealdag/python:3.9.10-mod
 
     steps:
       - uses: actions/checkout@v2
