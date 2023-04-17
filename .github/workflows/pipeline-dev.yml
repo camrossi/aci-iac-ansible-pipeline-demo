@@ -74,7 +74,7 @@ jobs:
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
     runs-on: self-hosted
-    #needs: ansible-dry-run
+    needs: ansible-dry-run
     #container: adealdag/python:3.9.10-mod
 
     steps:
