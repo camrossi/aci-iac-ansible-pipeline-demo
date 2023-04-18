@@ -115,3 +115,22 @@ epgs:
         pod: 1
         leafs: 101-102
         encap: 306
+  - name: jump_host
+    bd: 192.168.22.0_24_bd
+    prefGroup: no
+    contracts:
+      - contract: app_to_auth_conm
+        type: provider
+      - contract: any_to_log_con
+        type: consumer
+    domains:
+      - type: phys
+        domain: iac_physdom
+    ports:
+      - interface: vpc_iac
+        type: vpc
+        mode: regular
+        pod: 1
+        leafs: 101-102
+        encap: 306
+
