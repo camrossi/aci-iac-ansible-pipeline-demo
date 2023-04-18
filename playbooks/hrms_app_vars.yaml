@@ -132,4 +132,4 @@ epgs:
         mode: regular
         pod: 1
         leafs: 101-102
-        encap: 307
+        encap: 306
