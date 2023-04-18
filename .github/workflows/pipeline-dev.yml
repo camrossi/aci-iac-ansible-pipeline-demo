@@ -30,19 +30,6 @@ jobs:
       - name: Lint YAML files
         run: yamllint ./playbooks
 
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
   # Run ansible dry-run using check mode. Result is uploaded as artifact
   ansible-dry-run:
     runs-on: self-hosted
@@ -58,19 +45,6 @@ jobs:
           ansible --version
           ansible-playbook -i inventory.yaml deploy.yaml --check
         working-directory: playbooks
-
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   # Run pre-change validation on Nexus Dashboard Insights. Uses the artifact saved previously
   pre-change-validation:
@@ -92,16 +66,3 @@ jobs:
           ND_HOST=`cat inventory.yaml| yq .dcmdr.children.nd.hosts.nd1.ansible_host`
           echo "ND_HOST=$ND_HOST" >> $GITHUB_ENV
         working-directory: playbooks
-
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Nexus Dashboard Insights](${{ env.ND_HOST }}/appcenter/cisco/nexus-insights/ui/#/changeManagement/preChangeAnalysis)
