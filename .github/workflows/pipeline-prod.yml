@@ -23,18 +23,6 @@ jobs:
           ansible-playbook -i inventory.yaml aci_config_backup.yaml
         working-directory: playbooks
 
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   ansible-deploy:
     runs-on: self-hosted
@@ -49,16 +37,3 @@ jobs:
           ansible --version
           ansible-playbook -i inventory.yaml deploy.yaml
         working-directory: playbooks
-
-      - name: Send Webex Notification
-        uses: adealdag/action-webex-notification@python-v1
-        if: always()
-        with:
-          webexToken: ${{ secrets.WEBEX_TOKEN }}
-          roomID: ${{ secrets.ROOM_ID }}
-          markdownMsg: |
-            ### [${{ github.job }}] ${{ github.repository }} - ${{ github.event.head_commit.message }}
-            * Trigger: ${{ github.event_name }}
-            * Git SHA: ${{ github.sha }}
-            * Status: ${{ job.status }}
-            * Details URL: [Job Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
